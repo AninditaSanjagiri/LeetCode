@@ -1,25 +1,35 @@
 class Solution:
     def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
-        i=j=0
-        merged=[]
+        if len(nums1) > len(nums2):
+            nums1, nums2 = nums2, nums1
 
-        while i<len(nums1) and j<len(nums2):
-            if nums1[i]<nums2[j]:
-                merged.append(nums1[i])
-                i+=1
+        x = len(nums1)
+        y = len(nums2)
+
+        low = 0
+        high = x
+
+        while low <= high:
+            partitionX = (low + high) // 2
+            partitionY = (x + y + 1) // 2 - partitionX
+
+            maxLeftX = float('-inf') if partitionX == 0 else nums1[partitionX - 1]
+            minRightX = float('inf') if partitionX == x else nums1[partitionX]
+
+            maxLeftY = float('-inf') if partitionY == 0 else nums2[partitionY - 1]
+            minRightY = float('inf') if partitionY == y else nums2[partitionY]
+
+            if maxLeftX <= minRightY and maxLeftY <= minRightX:
+
+                if (x + y) % 2 == 0:
+                    return (max(maxLeftX, maxLeftY) + min(minRightX, minRightY)) / 2
+
+                else:
+                    return max(maxLeftX, maxLeftY)
+
+            elif maxLeftX > minRightY:
+                high = partitionX - 1
+
             else:
-                merged.append(nums2[j])
-                j+=1
-        while i<len(nums1):
-            merged.append(nums1[i])
-            i+=1
-        while j<len(nums2):
-            merged.append(nums2[j])
-            j+=1
-        
-        n=len(merged)
-        if n%2==1:
-            return merged[n//2]
-        else:
-            return (merged[n//2-1]+merged[n//2])/2
+                low = partitionX + 1
         
