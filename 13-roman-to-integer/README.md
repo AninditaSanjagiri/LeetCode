@@ -55,3 +55,261 @@ M             1000</pre>
 	<li><code>s</code> contains only&nbsp;the characters <code>(&#39;I&#39;, &#39;V&#39;, &#39;X&#39;, &#39;L&#39;, &#39;C&#39;, &#39;D&#39;, &#39;M&#39;)</code>.</li>
 	<li>It is <strong>guaranteed</strong>&nbsp;that <code>s</code> is a valid roman numeral in the range <code>[1, 3999]</code>.</li>
 </ul>
+
+
+
+<hr>
+
+<h2>Approach: Compare Current Symbol with Next Symbol</h2>
+
+<p>Roman numerals are usually formed by adding values from left to right.</p>
+
+<p>Example:</p>
+
+<pre>
+VIII = 5 + 1 + 1 + 1 = 8
+LX = 50 + 10 = 60
+</pre>
+
+<p>However, when a smaller numeral appears before a larger numeral, it means subtraction.</p>
+
+<p>Examples:</p>
+
+<pre>
+IV = 5 - 1 = 4
+IX = 10 - 1 = 9
+XL = 50 - 10 = 40
+CM = 1000 - 100 = 900
+</pre>
+
+<p>So while traversing the string:</p>
+
+<ul>
+    <li>If current value &lt; next value → subtract current</li>
+    <li>Otherwise → add current</li>
+</ul>
+
+<hr>
+
+<h2>Python Code</h2>
+
+<pre>
+class Solution:
+    def romanToInt(self, s: str) -&gt; int:
+
+        values = {
+            'I': 1,
+            'V': 5,
+            'X': 10,
+            'L': 50,
+            'C': 100,
+            'D': 500,
+            'M': 1000
+        }
+
+        total = 0
+
+        for i in range(len(s)):
+            if i &lt; len(s) - 1 and values[s[i]] &lt; values[s[i + 1]]:
+                total -= values[s[i]]
+            else:
+                total += values[s[i]]
+
+        return total
+</pre>
+
+<hr>
+
+<h2>Detailed Explanation</h2>
+
+<h3>Step 1: Store Roman Values</h3>
+
+<pre>
+values = {
+    'I': 1,
+    'V': 5,
+    'X': 10,
+    'L': 50,
+    'C': 100,
+    'D': 500,
+    'M': 1000
+}
+</pre>
+
+<p>This dictionary allows instant lookup of each Roman numeral value.</p>
+
+<hr>
+
+<h3>Step 2: Initialize Result</h3>
+
+<pre>
+total = 0
+</pre>
+
+<p>This stores the final integer value.</p>
+
+<hr>
+
+<h3>Step 3: Traverse the String</h3>
+
+<pre>
+for i in range(len(s)):
+</pre>
+
+<p>Process one Roman symbol at a time.</p>
+
+<hr>
+
+<h3>Step 4: Check Next Character</h3>
+
+<pre>
+if i &lt; len(s) - 1 and values[s[i]] &lt; values[s[i + 1]]:
+</pre>
+
+<p>We first ensure a next character exists.</p>
+
+<p>Then compare current symbol with next symbol.</p>
+
+<hr>
+
+<h3>Step 5: Subtract if Smaller Before Larger</h3>
+
+<pre>
+total -= values[s[i]]
+</pre>
+
+<p>Examples:</p>
+
+<pre>
+IV:
+I &lt; V → subtract 1
+
+IX:
+I &lt; X → subtract 1
+</pre>
+
+<hr>
+
+<h3>Step 6: Otherwise Add Normally</h3>
+
+<pre>
+total += values[s[i]]
+</pre>
+
+<p>Examples:</p>
+
+<pre>
+VI:
+V &gt; I → add 5
+I last symbol → add 1
+</pre>
+
+<hr>
+
+<h2>Dry Run</h2>
+
+<p><strong>Input:</strong></p>
+
+<pre>
+s = "MCMIV"
+</pre>
+
+<table>
+<tr>
+<th>Index</th>
+<th>Symbol</th>
+<th>Next</th>
+<th>Action</th>
+<th>Total</th>
+</tr>
+
+<tr>
+<td>0</td>
+<td>M</td>
+<td>C</td>
+<td>Add 1000</td>
+<td>1000</td>
+</tr>
+
+<tr>
+<td>1</td>
+<td>C</td>
+<td>M</td>
+<td>Subtract 100</td>
+<td>900</td>
+</tr>
+
+<tr>
+<td>2</td>
+<td>M</td>
+<td>I</td>
+<td>Add 1000</td>
+<td>1900</td>
+</tr>
+
+<tr>
+<td>3</td>
+<td>I</td>
+<td>V</td>
+<td>Subtract 1</td>
+<td>1899</td>
+</tr>
+
+<tr>
+<td>4</td>
+<td>V</td>
+<td>-</td>
+<td>Add 5</td>
+<td>1904</td>
+</tr>
+</table>
+
+<p><strong>Output:</strong></p>
+
+<pre>
+1904
+</pre>
+
+<hr>
+
+<h2>More Examples</h2>
+
+<pre>
+III   = 3
+LVIII = 58
+MCMXCIV = 1994
+</pre>
+
+<hr>
+
+<h2>Complexity Analysis</h2>
+
+<ul>
+    <li><strong>Time Complexity:</strong> <code>O(n)</code></li>
+    <li><strong>Space Complexity:</strong> <code>O(1)</code></li>
+</ul>
+
+<p>Where <code>n</code> is length of the Roman numeral string.</p>
+
+<hr>
+
+<h2>Why This Is Efficient</h2>
+
+<ul>
+    <li>Single pass through the string</li>
+    <li>Constant-time dictionary lookups</li>
+    <li>No special-case hardcoding required</li>
+</ul>
+
+<hr>
+
+<h2>Key Insight</h2>
+
+<p>Roman numerals become simple once you notice this rule:</p>
+
+<pre>
+Smaller before larger = subtract
+Otherwise = add
+</pre>
+
+<p>Apply that rule while scanning left to right.</p>
